@@ -5,7 +5,6 @@
 // Constructor
 Polynomial::Polynomial(Type newType)
 {
-                    cout << "@@@ Polynomial::Polynomial()" << endl;
     this->type = newType;
     if(this->type == TYPE_INPUT)
         this->coefficients.resize(G_MAX_IN + 1);
@@ -13,20 +12,15 @@ Polynomial::Polynomial(Type newType)
         this->coefficients.resize(G_MAX_OUT + 1);
 }
 
-// Destructor
-
-
 /*-----------------------  Getters  -----------------------*/
 
 Type Polynomial::getType()
 {
-                    cout << "@@@ Polynomial::getType()" << endl;
     return this->type;
 }
 
 num_coef Polynomial::getCoef(int deg)
 {
-                    cout << "@@@ Polynomial::getCoef()" << endl;
     return this->coefficients.at(deg);
 }
 
@@ -34,13 +28,11 @@ num_coef Polynomial::getCoef(int deg)
 
 void Polynomial::setType(Type newType)
 {
-                    cout << "@@@ Polynomial::setType()" << endl;
     this->type = newType;
 }
 
 void Polynomial::setCoeff(num_coef newCoeff, int deg)
 {
-                    cout << "@@@ Polynomial::setCoeff()" << endl;
     this->coefficients.at(deg) = newCoeff;
 }
 
@@ -59,7 +51,7 @@ void Polynomial::printPoly(ofstream &output)
         maxDeg = G_MAX_IN;
     else
         maxDeg = G_MAX_OUT;
-                cout << "CHEGOU AQUI!!" << endl;
+        
     // Checking the polynomial degree
     for(int i = maxDeg; i >= 0; i--)
         if(this->coefficients.at(i) != 0)

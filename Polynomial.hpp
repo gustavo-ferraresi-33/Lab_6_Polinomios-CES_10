@@ -26,7 +26,7 @@ class Polynomial
 
         /*-----------------------  Getters  -----------------------*/
 
-        Type getType();
+        Type     getType();
         num_coef getCoef(int deg);
 
         /*-----------------------  Setters  -----------------------*/

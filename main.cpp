@@ -45,13 +45,13 @@ int main()
     // Initial message
     initMess(output);
 
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < 10; i++)
     {
         readOperation(&op, input);
         readPoly(input, &p1);
         readPoly(input, &p2);
         executeOperation(op, p1, p2, &pOut1, &pOut2);
-        output << endl << endl << "@@" << i <<": ";
+        output << endl << endl << "@@" << i + 1 <<": ";
         pOut1->printPoly(output);
     }
 
@@ -66,7 +66,6 @@ int main()
 // Check for error
 void checkErr(bool cond, string msg)
 {
-                   // cout << "@@@ CheckErr()" << endl;
     if(cond == false)
     {
         cout << msg << endl << endl;
@@ -78,7 +77,6 @@ void checkErr(bool cond, string msg)
 // Initial message to the user
 void initMess(ofstream &output)
 {
-                    cout << "@@@ initMess()" << endl;
     output << "########################################################" << endl;
     output << "###############  POLYNOMIAL  CALCULATOR  ###############" << endl;
     output << "########################################################" << endl;
@@ -94,6 +92,7 @@ void readPoly(ifstream &input, Polynomial **ptrPoly)
     int deg = -1;      // Degree of a term of the polynomial
     char chAux = '\0'; // Auxiliar variable
 
+    delete *ptrPoly;
     *ptrPoly = new(nothrow) Polynomial(TYPE_INPUT);
 
     do
@@ -123,9 +122,10 @@ void readPoly(ifstream &input, Polynomial **ptrPoly)
 /* WRITTEN, CHECKED AND TESTED: IT IS WORKING PROPERLY */
 void readOperation(char *ptrOp, ifstream &input)
 {
+                    cout << "@@@ readOperation()" << endl;    
     input >> *ptrOp;
     checkErr(   *ptrOp == 'S' || *ptrOp == 's' 
-             || *ptrOp == 'M' || *ptrOp == 'm'
+             || *ptrOp == 'P' || *ptrOp == 'p'
              || *ptrOp == 'D' || *ptrOp == 'd'
              , "Error! Invalid operation initial!");
 }
@@ -133,14 +133,23 @@ void readOperation(char *ptrOp, ifstream &input)
 /* WRITTEN, CHECKED AND TESTED: IT IS WORKING PROPERLY, BUT IT IS NOT COMPLETED YET */
 void executeOperation(char op, Polynomial *p1, Polynomial *p2, Polynomial **ptrResult_1, Polynomial **ptrResult_2)
 {
+                    cout << "@@@ executeOperation()" << endl;
+
+    // Making the result polynomials become identically null polynomials
+    delete *ptrResult_1;
+    delete *ptrResult_2;
+    *ptrResult_1 = new(nothrow) Polynomial(TYPE_OUTPUT);
+    *ptrResult_2 = new(nothrow) Polynomial(TYPE_OUTPUT);
+
     switch(op)
     {
         case 'S':
         case 's': 
             sumPoly(p1, p2, ptrResult_1);
             break;
-        case 'M':
-        case 'm':                               
+        case 'P':
+        case 'p':
+            multiPoly(p1, p2, ptrResult_1);
             break;
         case 'D':
         case 'd':                               
@@ -154,20 +163,35 @@ void executeOperation(char op, Polynomial *p1, Polynomial *p2, Polynomial **ptrR
 /* WRITTEN, CHECKED AND TESTED: IT IS WORKING PROPERLY */
 void sumPoly(Polynomial *term1, Polynomial *term2, Polynomial **ptrSum)
 {
-    *ptrSum = new(nothrow) Polynomial(TYPE_OUTPUT);
-
+                    cout << "@@@ sumPoly()" << endl;        
     for(int i = 0; i <= G_MAX_IN; i++)
     {
         (*ptrSum)->setCoeff(term1->getCoef(i) + term2->getCoef(i), i);
     }
 }
 
+/* WRITTEN, CHECKED AND TESTED: IT IS WORKING PROPERLY */
 void multiPoly(Polynomial *fact1, Polynomial *fact2, Polynomial **ptrProduct)
 {
-
+                    cout << "@@@ multiPoly()" << endl;        
+    for(int i = 0; i <= G_MAX_IN; i++)
+        for(int j = 0; j <= G_MAX_IN; j++)
+        {
+            (*ptrProduct)->setCoeff((*ptrProduct)->getCoef(i + j) 
+                                        + fact1->getCoef(i) * fact2->getCoef(j)
+                                    , i + j);
+        }
 }
 
+/* I HAVE NOT STARTED TO WRITE IT YET */
 void divPoly(Polynomial *dividend, Polynomial *divisor, Polynomial **ptrQuotient, Polynomial **ptrRemainder)
 {
-
+    /* ESCRITO DE FORMA ZOADA SOH PRA EU CONSEGUIR COMPILAR */
+                    cout << "@@@ diviPoly()" << endl;        
+                int i;
+    do
+    {
+        i = i;
+    } while(false);
+    
 }
