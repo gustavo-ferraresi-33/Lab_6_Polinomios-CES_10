@@ -13,6 +13,9 @@ Polynomial::Polynomial(Type newType)
         this->coefficients.resize(G_MAX_OUT + 1);
 }
 
+// Destructor
+
+
 /*-----------------------  Getters  -----------------------*/
 
 Type Polynomial::getType()
@@ -56,7 +59,7 @@ void Polynomial::printPoly(ofstream &output)
         maxDeg = G_MAX_IN;
     else
         maxDeg = G_MAX_OUT;
-
+                cout << "CHEGOU AQUI!!" << endl;
     // Checking the polynomial degree
     for(int i = maxDeg; i >= 0; i--)
         if(this->coefficients.at(i) != 0)
@@ -69,7 +72,7 @@ void Polynomial::printPoly(ofstream &output)
     // If the polynomial is null
     if(isNull)
     {
-        output << "0";
+        output << "0 ";
     }
     // If the polynomial is not null
     else
@@ -93,13 +96,19 @@ void Polynomial::printPoly(ofstream &output)
                     output << " - ";
                 }
 
-                // Printing the MODULE of the coefficient
-                // OBS: an "if-else" structure is used because of its robustness
-                if(this->coefficients.at(i) >= 0)
-                    output <<   this->coefficients.at(i);
-                else
-                    output << - this->coefficients.at(i);
-                
+                // If the coefficient does not have module "1" or is the independent term
+                if( (this->coefficients.at(i) != 1 && this->coefficients.at(i) != -1) 
+                    || i == 0                                                         
+                  )
+                {
+                    // Printing the MODULE of the coefficient
+                    // OBS: an "if-else" structure is used because of its robustness
+                    if(this->coefficients.at(i) >= 0)
+                        output <<   this->coefficients.at(i);
+                    else
+                        output << - this->coefficients.at(i);
+                }                
+
                 if(i > 0)
                     output << "x";
                 if(i > 1)

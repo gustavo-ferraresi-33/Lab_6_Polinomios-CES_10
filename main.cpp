@@ -16,7 +16,12 @@ using namespace std;
  */
 void checkErr(bool cond,       string msg);
 void initMess(ofstream &output);
-void readPoly(ifstream &input, Polynomial *poly);
+void readPoly(ifstream &input, Polynomial **ptrPoly);
+void readOperation(char *ptrOp, ifstream &input);
+void executeOperation(char op, Polynomial *p1, Polynomial *p2, Polynomial **ptrResult_1, Polynomial **ptrResult_2);
+void sumPoly(Polynomial *term1, Polynomial *term2, Polynomial **ptrSum);
+void multiPoly(Polynomial *fact1, Polynomial *fact2, Polynomial **ptrProduct);
+void divPoly(Polynomial *dividend, Polynomial *divisor, Polynomial **ptrQuotient, Polynomial **ptrRemainder);
 
 
 int main()
@@ -24,11 +29,12 @@ int main()
     /* 
      * Variable Declarations 
      */
-    Polynomial *p1   = nullptr, // Input 1
-               *p2   = nullptr, // Input 2
-               *pOut = nullptr; // Result
+    Polynomial *p1    = nullptr, // Input 1
+               *p2    = nullptr, // Input 2
+               *pOut1 = nullptr, // Result 1
+               *pOut2 = nullptr; // Result 2
     num_coef coef; // Coefficient of a polynomial
-    int op = -1;   // Operation to be performed
+    char op = -1;  // Operation to be performed
 
     // Opening the input file
     ifstream input("/home/gustavoferraresi/Documents/ITAndroids/Estudo/POO/Lab_6_Polinomios-CES_10/Input", ifstream::in);
@@ -38,12 +44,16 @@ int main()
 
     // Initial message
     initMess(output);
-    
-    vector<num_coef> cf = {-1, -1, 3, -5};
-    auto p = new(nothrow) Polynomial(TYPE_INPUT);
-    for(int i = 0; i < 4; i++)
-        p->setCoeff(cf.at(i), i);
-    p->printPoly(output);
+
+    for(int i = 0; i < 5; i++)
+    {
+        readOperation(&op, input);
+        readPoly(input, &p1);
+        readPoly(input, &p2);
+        executeOperation(op, p1, p2, &pOut1, &pOut2);
+        output << endl << endl << "@@" << i <<": ";
+        pOut1->printPoly(output);
+    }
 
     return 0;
 }
@@ -56,7 +66,7 @@ int main()
 // Check for error
 void checkErr(bool cond, string msg)
 {
-                    cout << "@@@ CheckErr()" << endl;
+                   // cout << "@@@ CheckErr()" << endl;
     if(cond == false)
     {
         cout << msg << endl << endl;
@@ -74,9 +84,9 @@ void initMess(ofstream &output)
     output << "########################################################" << endl;
 }
 
-/* WRITTEN, NOT TESTED */
+/* WRITTEN, CHECKED AND TESTED: IT IS WORKING PROPERLY */
 // Read a polynomial
-void readPoly(ifstream &input, Polynomial *poly)
+void readPoly(ifstream &input, Polynomial **ptrPoly)
 {
                     cout << "@@@ readPoly()" << endl;                    
     // Variable declaration
@@ -84,7 +94,7 @@ void readPoly(ifstream &input, Polynomial *poly)
     int deg = -1;      // Degree of a term of the polynomial
     char chAux = '\0'; // Auxiliar variable
 
-    poly = new(nothrow) Polynomial(TYPE_INPUT);
+    *ptrPoly = new(nothrow) Polynomial(TYPE_INPUT);
 
     do
     {
@@ -101,11 +111,63 @@ void readPoly(ifstream &input, Polynomial *poly)
             default : checkErr(false, "Error! Invalid signal character!"); break;
         }
         input >> chAux; // Read "x"
-        checkErr(chAux == 'x', "Error! Polynomial variable is not \"x\"!");
+        checkErr(chAux == 'x' || chAux == 'X', "Error! Polynomial variable is not \"x\"!");
         input >> chAux; // Read "^"
         checkErr(chAux == '^', "Error! Power operator is not \"^\"!");
-        input >> deg; // Degree of the term
+        input >> deg;   // Degree of the term
         checkErr(deg >= 0, "Error! Invalid term degree!");
-        poly->setCoeff(coef, deg);
+        (*ptrPoly)->setCoeff(coef, deg);
     } while(chAux != CH_END);
+}
+
+/* WRITTEN, CHECKED AND TESTED: IT IS WORKING PROPERLY */
+void readOperation(char *ptrOp, ifstream &input)
+{
+    input >> *ptrOp;
+    checkErr(   *ptrOp == 'S' || *ptrOp == 's' 
+             || *ptrOp == 'M' || *ptrOp == 'm'
+             || *ptrOp == 'D' || *ptrOp == 'd'
+             , "Error! Invalid operation initial!");
+}
+
+/* WRITTEN, CHECKED AND TESTED: IT IS WORKING PROPERLY, BUT IT IS NOT COMPLETED YET */
+void executeOperation(char op, Polynomial *p1, Polynomial *p2, Polynomial **ptrResult_1, Polynomial **ptrResult_2)
+{
+    switch(op)
+    {
+        case 'S':
+        case 's': 
+            sumPoly(p1, p2, ptrResult_1);
+            break;
+        case 'M':
+        case 'm':                               
+            break;
+        case 'D':
+        case 'd':                               
+            break; 
+        default : 
+            checkErr(false, "Error! Invalid operation!");
+            break;
+    }
+}
+
+/* WRITTEN, CHECKED AND TESTED: IT IS WORKING PROPERLY */
+void sumPoly(Polynomial *term1, Polynomial *term2, Polynomial **ptrSum)
+{
+    *ptrSum = new(nothrow) Polynomial(TYPE_OUTPUT);
+
+    for(int i = 0; i <= G_MAX_IN; i++)
+    {
+        (*ptrSum)->setCoeff(term1->getCoef(i) + term2->getCoef(i), i);
+    }
+}
+
+void multiPoly(Polynomial *fact1, Polynomial *fact2, Polynomial **ptrProduct)
+{
+
+}
+
+void divPoly(Polynomial *dividend, Polynomial *divisor, Polynomial **ptrQuotient, Polynomial **ptrRemainder)
+{
+
 }
