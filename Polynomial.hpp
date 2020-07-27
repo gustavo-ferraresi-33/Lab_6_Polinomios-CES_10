@@ -35,6 +35,7 @@ class Polynomial
 
         /*-------------------  Other functions  -------------------*/
         void printPoly(ofstream &output);
+        int  degPoly(Type polyType);
 
 };
 

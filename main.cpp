@@ -14,14 +14,24 @@ using namespace std;
 /* 
  * Prototypes
  */
-void checkErr(bool cond,       string msg);
-void initMess(ofstream &output);
-void readPoly(ifstream &input, Polynomial **ptrPoly);
-void readOperation(char *ptrOp, ifstream &input);
-void executeOperation(char op, Polynomial *p1, Polynomial *p2, Polynomial **ptrResult_1, Polynomial **ptrResult_2);
-void sumPoly(Polynomial *term1, Polynomial *term2, Polynomial **ptrSum);
-void multiPoly(Polynomial *fact1, Polynomial *fact2, Polynomial **ptrProduct);
-void divPoly(Polynomial *dividend, Polynomial *divisor, Polynomial **ptrQuotient, Polynomial **ptrRemainder);
+void checkErr
+(bool cond,            string msg);
+void initMess
+(ofstream &output);
+void readPoly
+(ifstream &input,      Polynomial **ptrPoly);
+void readOperation
+(char *ptrOp,          ifstream &input);
+void executeOperation
+(char op,              Polynomial *p1,      Polynomial *p2,           Polynomial **ptrResult_1,
+                       Polynomial **ptrResult_2);
+void sumPoly
+(Polynomial *term1,    Polynomial *term2,   Polynomial **ptrSum);
+void multiPoly
+(Polynomial *fact1,    Polynomial *fact2,   Polynomial **ptrProduct);
+void divPoly
+(Polynomial *dividend, Polynomial *divisor, Polynomial **ptrQuotient, Polynomial **ptrRemainder);
+            /* void divPoly(Polynomial *dividend, Polynomial *divisor, Polynomial **ptrQuotient, Polynomial **ptrRemainder, ofstream &DEBUGoutput); */
 
 
 int main()
@@ -33,8 +43,8 @@ int main()
                *p2    = nullptr, // Input 2
                *pOut1 = nullptr, // Result 1
                *pOut2 = nullptr; // Result 2
-    num_coef coef; // Coefficient of a polynomial
-    char op = -1;  // Operation to be performed
+    num_coef  coef;  // Coefficient of a polynomial
+    char op = '\0';  // Operation to be performed
 
     // Opening the input file
     ifstream input("/home/gustavoferraresi/Documents/ITAndroids/Estudo/POO/Lab_6_Polinomios-CES_10/Input", ifstream::in);
@@ -45,14 +55,47 @@ int main()
     // Initial message
     initMess(output);
 
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 14; i++)
     {
         readOperation(&op, input);
         readPoly(input, &p1);
         readPoly(input, &p2);
+        /* 
+         * PROBLEM:
+         * THE DIVISION OPERANDS ARE ACTUALLY BEING READ APROPRIATELY, BUT,
+         * WHEN THEY ARE PASSED TO THE "divPoly()" FUNCTION, THE DIVIDEND BECOMES
+         * IDENTICALLY NULL
+         */
+                    /*              if(op == 'D' || op == 'd')
+                                    {
+                                        output << "$$$$$$ Division operands at ( " << i + 1 << " ):" << endl;
+                                        output << "$$$ Dividend:  ";
+                                        p1->printPoly(output);
+                                        output << "$$$ Divisor:  ";
+                                        p2->printPoly(output);
+                                        output << endl;
+                                    }
+                    
+                                    if(op != 'D' && op != 'd')
+                                        executeOperation(op, p1, p2, &pOut1, &pOut2);
+                                    else
+                                    {
+                                        delete pOut1;
+                                        delete pOut2;
+                                        pOut1 = new(nothrow) Polynomial(TYPE_OUTPUT);
+                                        pOut2 = new(nothrow) Polynomial(TYPE_OUTPUT);
+                                        divPoly(p1, p2, &pOut1, &pOut2, output);
+                                    }
+                    */
         executeOperation(op, p1, p2, &pOut1, &pOut2);
         output << endl << endl << "@@" << i + 1 <<": ";
         pOut1->printPoly(output);
+        // Printig the remainder of the division
+        if(op == 'D' || op == 'd')
+        {
+            output << "com resto  ";
+            pOut2->printPoly(output);
+        }
     }
 
     return 0;
@@ -92,6 +135,7 @@ void readPoly(ifstream &input, Polynomial **ptrPoly)
     int deg = -1;      // Degree of a term of the polynomial
     char chAux = '\0'; // Auxiliar variable
 
+    // Initializing the polynomial being read as identically null 
     delete *ptrPoly;
     *ptrPoly = new(nothrow) Polynomial(TYPE_INPUT);
 
@@ -152,7 +196,8 @@ void executeOperation(char op, Polynomial *p1, Polynomial *p2, Polynomial **ptrR
             multiPoly(p1, p2, ptrResult_1);
             break;
         case 'D':
-        case 'd':                               
+        case 'd':
+            divPoly(p1, p2, ptrResult_1, ptrResult_2);
             break; 
         default : 
             checkErr(false, "Error! Invalid operation!");
@@ -183,15 +228,59 @@ void multiPoly(Polynomial *fact1, Polynomial *fact2, Polynomial **ptrProduct)
         }
 }
 
-/* I HAVE NOT STARTED TO WRITE IT YET */
+/* WRITTEN AND CHECKED, BUT NOT TESTED */
+/* 
+ * PROBLEM:
+ * DA SEGUNDA DIVISAO EM DIANTE, O POLINOMIO "DIVIDENDO"
+ * ESTAH COMECANDO A DIVISAO COMO SENDO IDENTICAMENTE
+ * NULO
+ */
+/* void divPoly(Polynomial *dividend, Polynomial *divisor, Polynomial **ptrQuotient, Polynomial **ptrRemainder, ofstream &DEBUGoutput) */
+
 void divPoly(Polynomial *dividend, Polynomial *divisor, Polynomial **ptrQuotient, Polynomial **ptrRemainder)
 {
-    /* ESCRITO DE FORMA ZOADA SOH PRA EU CONSEGUIR COMPILAR */
                     cout << "@@@ diviPoly()" << endl;        
-                int i;
+
+    // Variable declaration
+    int degTermQuot       = -1; // Degree of a quotient term
+    num_coef coefTermQuot =  0; // Coefficient of a quotient term
+                  /*   int DEBUGstep = 1; */
+
     do
     {
-        i = i;
-    } while(false);
-    
+
+                    /*                 DEBUGoutput << "### iteration:  " << DEBUGstep << endl;
+                                    DEBUGoutput << "###### DIVIDEND:  ";
+                                    dividend->printPoly(DEBUGoutput);
+                                    DEBUGoutput << "###### DIVISOR:  ";
+                                    divisor->printPoly(DEBUGoutput);
+                                    DEBUGoutput << "###### QUOTIENT:  ";
+                                    (*ptrQuotient)->printPoly(DEBUGoutput);
+                                    DEBUGoutput << "###### REMAINDER:  ";
+                                    (*ptrRemainder)->printPoly(DEBUGoutput);
+                     */
+        degTermQuot = dividend->degPoly(TYPE_INPUT) - divisor->degPoly(TYPE_INPUT);
+        // If the division can not be continued
+        if(degTermQuot < 0)
+            break;
+
+        coefTermQuot = dividend->getCoef(dividend->degPoly(TYPE_INPUT)) / divisor->getCoef(divisor->degPoly(TYPE_INPUT));
+
+        // Setting up the quotient's coefficient
+        (*ptrQuotient)->setCoeff(coefTermQuot, degTermQuot);
+        
+        // Updating the dividend
+        // The update process is made like this to ensure its RUBUSTNESS
+        // Updating the dividend's previous leader coefficient to ZERO
+        dividend->setCoeff(0, divisor->degPoly(TYPE_INPUT) + degTermQuot);
+        //Updating the dividend's othr coefficients
+        for(int i = divisor->degPoly(TYPE_INPUT) - 1; i >= 0; i--)
+        {
+            dividend->setCoeff(dividend->getCoef(degTermQuot + i)  - coefTermQuot * divisor->getCoef(i), degTermQuot + i);
+        }
+                            /* DEBUGstep++; */
+
+    } while(degTermQuot >= 0);
+
+    *ptrRemainder = dividend;
 }

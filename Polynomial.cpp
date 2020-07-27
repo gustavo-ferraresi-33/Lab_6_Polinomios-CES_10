@@ -51,7 +51,7 @@ void Polynomial::printPoly(ofstream &output)
         maxDeg = G_MAX_IN;
     else
         maxDeg = G_MAX_OUT;
-        
+
     // Checking the polynomial degree
     for(int i = maxDeg; i >= 0; i--)
         if(this->coefficients.at(i) != 0)
@@ -114,4 +114,34 @@ void Polynomial::printPoly(ofstream &output)
     }
     // Inserting the ending character
     output << CH_END << endl << endl;   
+}
+
+/* WRITTEN, CHECKED AND TESTED: IT IS WORKING PROPERLY */
+int Polynomial::degPoly(Type polyType)
+{
+    // Variable declaration
+    int maxDeg = -1; // Maximum polynomial degree
+    
+    switch(polyType)
+    {
+        case TYPE_INPUT: 
+            maxDeg = G_MAX_IN;
+            break;
+        case TYPE_OUTPUT: 
+            maxDeg = G_MAX_OUT;
+            break;
+        default:
+            cout << "Error! Invalid polynomial type!" << endl << endl;
+            exit(EXIT_FAILURE);
+            break;
+    }
+
+    for(int i = maxDeg; i >= 0; i--)
+    {
+        if(this->coefficients.at(i) != 0)
+            return i;
+    }
+
+    //If the polynomial is identically null
+    return G_NULL;
 }
